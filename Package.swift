@@ -14,6 +14,11 @@ let package = Package(
             targets: [
                 "SafeURL",
             ]),
+        .plugin(
+            name: "SafeURLPLugin",
+            targets: [
+                "SafeURLPlugin",
+            ])
     ],
     dependencies: [
         .package(url: "https://github.com/jpsim/SourceKitten.git", from: "0.32.0"),
@@ -32,12 +37,20 @@ let package = Package(
                 .product(name: "SourceKittenFramework", package: "SourceKitten"),
             ]
         ),
+        .plugin(
+            name: "SafeURLPlugin",
+            capability: .buildTool(),
+            dependencies: [
+                "SafeURLLint"
+            ]
+        ),
         .executableTarget(
             name: "SafeURLPlayground",
             dependencies: [
                 "SafeURL"
             ],
             plugins: [
+                "SafeURLPlugin"
             ]
         ),
     ]
