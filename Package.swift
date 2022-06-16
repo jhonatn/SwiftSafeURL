@@ -1,15 +1,19 @@
-// swift-tools-version: 5.7
-// The swift-tools-version declares the minimum version of Swift required to build this package.
+// swift-tools-version: 5.6
 
 import PackageDescription
 
 let package = Package(
-    name: "URLLintPlugin",
+    name: "SafeURL",
+    platforms: [
+        .iOS("11.0"),
+        .macOS("12")
+    ],
     products: [
-        // Products define the executables and libraries a package produces, and make them visible to other packages.
         .library(
-            name: "URLLintPlugin",
-            targets: ["URLLintPlugin"]),
+            name: "SafeURL",
+            targets: [
+                "SafeURL",
+            ]),
     ],
     dependencies: [
         .package(url: "https://github.com/jpsim/SourceKitten.git", from: "0.32.0"),
@@ -18,15 +22,22 @@ let package = Package(
         // Targets are the basic building blocks of a package. A target can define a module or a test suite.
         // Targets can depend on other targets in this package, and on products in packages this package depends on.
         .target(
-            name: "URLLintPlugin",
-            dependencies: []),
-        .testTarget(
-            name: "URLLintPluginTests",
-            dependencies: ["URLLintPlugin"]),
+            name: "SafeURL",
+            dependencies: [
+            ]
+        ),
         .executableTarget(
             name: "SafeURLLint",
             dependencies: [
                 .product(name: "SourceKittenFramework", package: "SourceKitten"),
+            ]
+        ),
+        .executableTarget(
+            name: "SafeURLPlayground",
+            dependencies: [
+                "SafeURL"
+            ],
+            plugins: [
             ]
         ),
     ]
