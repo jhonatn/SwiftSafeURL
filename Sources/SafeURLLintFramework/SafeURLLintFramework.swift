@@ -56,6 +56,8 @@ public class SafeURLKit {
     }
     
     public static func scanAndReport(_ scanInfo: SafeURLScanInfo) throws -> Bool {
+        setenv("IN_PROCESS_SOURCEKIT", "YES", 1) // Necessary for running within a plugin sandbox
+        
         let skFile = SourceKittenFramework.File(contents: scanInfo.fileContent)
         let skStructure = try SourceKittenFramework.Structure(file: skFile)
         let skd = SourceKittenDictionary(skStructure.dictionary)
