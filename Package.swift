@@ -1,4 +1,4 @@
-// swift-tools-version: 5.6
+// swift-tools-version: 5.7
 
 import PackageDescription
 
@@ -15,7 +15,7 @@ let package = Package(
                 "SafeURL",
             ]),
         .plugin(
-            name: "SafeURLPLugin",
+            name: "SafeURLPlugin",
             targets: [
                 "SafeURLPlugin",
             ])
@@ -24,34 +24,30 @@ let package = Package(
         .package(url: "https://github.com/jpsim/SourceKitten.git", from: "0.32.0"),
     ],
     targets: [
-        // Targets are the basic building blocks of a package. A target can define a module or a test suite.
-        // Targets can depend on other targets in this package, and on products in packages this package depends on.
+        // Interface
         .target(
-            name: "SafeURL",
-            dependencies: [
-            ]
-        ),
-        .executableTarget(
-            name: "SafeURLLint",
-            dependencies: [
-                .product(name: "SourceKittenFramework", package: "SourceKitten"),
-            ]
+            name: "SafeURL"
         ),
         .plugin(
             name: "SafeURLPlugin",
             capability: .buildTool(),
+            dependencies: ["SafeURLLintExecutable", "SafeURLLintFramework"]
+        ),
+        // Plugin internal code
+        .target(
+            name: "SafeURLLintFramework",
             dependencies: [
-                "SafeURLLint"
+                .product(name: "SourceKittenFramework", package: "SourceKitten"),
             ]
         ),
         .executableTarget(
+            name: "SafeURLLintExecutable",
+            dependencies: ["SafeURLLintFramework"]
+        ),
+        .executableTarget(
             name: "SafeURLPlayground",
-            dependencies: [
-                "SafeURL"
-            ],
-            plugins: [
-                "SafeURLPlugin"
-            ]
+            dependencies: ["SafeURL"],
+            plugins: ["SafeURLPlugin"]
         ),
     ]
 )

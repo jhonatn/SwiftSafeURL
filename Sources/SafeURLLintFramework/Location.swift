@@ -18,8 +18,8 @@ struct Location: Codable {
 
     /// Creates a `Location` based on a `SwiftLintFile` and a byte-offset into the file.
     /// Fails if the specified offset was not a valid location in the file.
-    init?(file: SourceKittenFramework.File, byteRange: ByteRange) {
-        self.file = file.path
+    init?(file: SourceKittenFramework.File, filePath: String? = nil, byteRange: ByteRange) {
+        self.file = filePath ?? file.path
         guard let _line = file.stringView.lineAndCharacter(forByteOffset: byteRange.lowerBound)?.line, let range = file.stringView.lineRangeWithByteRange(byteRange) else {
             return nil
         }
