@@ -15,4 +15,4 @@ guard let scanInfo = try SafeURLKit.preScanShowsPossibleReports(file: filePath) 
 
 let result = try SafeURLKit.scanAndReport(scanInfo)
 
-exit(result ? 1 : 0)
+exit(Int32(result))

@@ -1,5 +1,7 @@
 import Foundation
 import SourceKittenFramework
+import XcodeIssueReporting
+import XcodeIssueReportingForSourceKitten
 
 private let quotesAsCharSet = CharacterSet(arrayLiteral: "\"")
 private let expectedParameterName = "safeString"
@@ -17,9 +19,9 @@ typealias SourceKittenSubstructure = [SourceKittenDictionary]
 public class SafeURLScanInfo {
     let filePath: String
     let fileContent: String
-    let scanMode: EditorMessageType
+    let scanMode: XcodeIssueType
     
-    init(filePath: String, fileContent: String, scanMode: EditorMessageType) {
+    init(filePath: String, fileContent: String, scanMode: XcodeIssueType) {
         self.filePath = filePath
         self.fileContent = fileContent
         self.scanMode = scanMode
@@ -27,6 +29,8 @@ public class SafeURLScanInfo {
 }
 
 public class SafeURLKit {
+    private typealias RawLintViolation = (location: XcodeIssueLocation, ruleDescription: String?)
+    
     private static func prepareSourceKitten() {
         setenv("IN_PROCESS_SOURCEKIT", "YES", 1) // Necessary for running within a plugin sandbox
     }
@@ -59,60 +63,59 @@ public class SafeURLKit {
         )
     }
     
-    public static func scanAndReport(_ scanInfo: SafeURLScanInfo) throws -> Bool {
+    public static func scanAndReport(_ scanInfo: SafeURLScanInfo) throws -> Int {
         prepareSourceKitten()
         
         let skFile = SourceKittenFramework.File(contents: scanInfo.fileContent)
         let skStructure = try SourceKittenFramework.Structure(file: skFile)
-        let skd = SourceKittenDictionary(skStructure.dictionary)
+        let skd = skStructure.readableDictionary()
 
         let urlDeclarations: [SourceKittenSubstructure] = skd.flatten().compactMap { "URL" == $0.name ? $0.substructure : nil }
 
-        var presentedErrors = false
-
-        urlDeclarations.forEach { urlInit in
-            guard let callArgumentDict = extractSafeURLArgumentFromValidSubstructure(urlInit),
-                let bodyByteRange = callArgumentDict.bodyByteRange,
-                let location = Location(file: skFile, filePath: scanInfo.filePath, byteRange: bodyByteRange),
+        let allViolations: [RawLintViolation] = urlDeclarations.flatMap { urlInit in
+            var declarationViolations: [RawLintViolation] = []
+            
+            guard
+                let callArgumentDict = extractSafeURLArgumentFromValidSubstructure(urlInit),
+                let bodyByteRange: ByteRange = callArgumentDict.bodyByteRange,
+                let location = XcodeIssueLocation.sourceKittenFile(skFile, filePath: scanInfo.filePath, byteRange: bodyByteRange),
                 let text = skFile.stringView.substringWithByteRange(bodyByteRange)
-                else
-            {
-                return
+            else {
+                return declarationViolations
             }
-
-            var violations: [(location: Location, ruleDescription: String?)] = []
 
             unvalidSafeInputRegexes.forEach {
                 if text.range(of: $0.rule, options: .regularExpression) != nil {
-                    violations.append((
+                    declarationViolations.append((
                         location: location,
                         ruleDescription: $0.description
                     ))
                 }
             }
 
-            if violations.isEmpty {
+            if declarationViolations.isEmpty {
                 let textWithoutOuterQuotes = text.trimmingCharacters(in: quotesAsCharSet)
                 if URL(string: textWithoutOuterQuotes) == nil {
-                    violations.append((
+                    declarationViolations.append((
                         location: location,
                         ruleDescription: nil
                     ))
                 }
             }
-
-            violations.forEach { violation in
-                if case .error = scanInfo.scanMode {
-                    presentedErrors = true
-                }
-                reportMessageToEditor(
-                    location: violation.location,
-                    type: scanInfo.scanMode,
-                    description: "URL syntax error" + (violation.ruleDescription.map { ": \($0)" } ?? "")
-                )
-            }
+            
+            return declarationViolations
         }
-
-        return presentedErrors
+        
+        let reportResult = XcodeIssue.report(
+            allViolations.map({ location, message in
+                XcodeIssue.issue(
+                    scanInfo.scanMode,
+                    "URL syntax error" + (message.map { ": \($0)" } ?? ""),
+                    at: location
+                )
+            })
+        )
+        
+        return reportResult
     }
 }
