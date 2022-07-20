@@ -15,9 +15,6 @@ struct SourceKittenDictionary {
     /// The kind of Swift statement represented by this dictionary, if it is a statement.
     let statementKind: StatementKind?
 
-    /// The accessibility level for this dictionary, if it is a declaration.
-//    let accessibility: AccessControlLevel?
-
     /// Creates a SourceKitten dictionary given a `Dictionary<String, SourceKitRepresentable>` input.
     ///
     /// - parameter value: The input dictionary/
@@ -32,8 +29,6 @@ struct SourceKittenDictionary {
         self.expressionKind = stringKind.flatMap(SwiftExpressionKind.init)
         self.declarationKind = stringKind.flatMap(SwiftDeclarationKind.init)
         self.statementKind = stringKind.flatMap(StatementKind.init)
-
-//        self.accessibility = (value["key.accessibility"] as? String).flatMap(AccessControlLevel.init(identifier:))
     }
 
     /// Body length
@@ -186,105 +181,7 @@ struct SourceKittenDictionary {
         let array = value["key.inheritedtypes"] as? [SourceKitRepresentable] ?? []
         return array.compactMap { ($0 as? [String: String]).flatMap { $0["key.name"] } }
     }
-
-    internal func extractCallsToSuper(methodName: String) -> [String] {
-        guard let methodNameWithoutArguments = methodName.split(separator: "(").first else {
-            return []
-        }
-        let superCall = "super.\(methodNameWithoutArguments)"
-        return substructure.flatMap { elems -> [String] in
-            guard let type = elems.expressionKind,
-                let name = elems.name,
-                type == .call && superCall == name else {
-                    return elems.extractCallsToSuper(methodName: methodName)
-            }
-            return [name]
-        }
-    }
 }
-
-extension SourceKittenDictionary {
-    /// Traversing all substuctures of the dictionary hierarchically, calling `traverseBlock` on each node.
-    /// Traversing using depth first strategy, so deepest substructures will be passed to `traverseBlock` first.
-    ///
-    /// - parameter traverseBlock: block that will be called for each substructure in the dictionary.
-    ///
-    /// - returns: The list of substructure dictionaries with updated values from the traverse block.
-    func traverseDepthFirst<T>(traverseBlock: (SourceKittenDictionary) -> [T]?) -> [T] {
-        var result: [T] = []
-        traverseDepthFirst(collectingValuesInto: &result, traverseBlock: traverseBlock)
-        return result
-    }
-
-    private func traverseDepthFirst<T>(collectingValuesInto array: inout [T],
-                                       traverseBlock: (SourceKittenDictionary) -> [T]?) {
-        substructure.forEach { subDict in
-            subDict.traverseDepthFirst(collectingValuesInto: &array, traverseBlock: traverseBlock)
-
-            if let collectedValues = traverseBlock(subDict) {
-                array += collectedValues
-            }
-        }
-    }
-
-    /// Traversing all substuctures of the dictionary hierarchically, calling `traverseBlock` on each node.
-    /// Traversing using depth first strategy, so deepest substructures will be passed to `traverseBlock` first.
-    ///
-    /// - parameter traverseBlock: block that will be called for each substructure and its parent.
-    ///
-    /// - returns: The list of substructure dictionaries with updated values from the traverse block.
-    func traverseWithParentDepthFirst<T>(traverseBlock: (SourceKittenDictionary, SourceKittenDictionary) -> [T]?)
-        -> [T] {
-        var result: [T] = []
-        traverseWithParentDepthFirst(collectingValuesInto: &result, traverseBlock: traverseBlock)
-        return result
-    }
-
-    private func traverseWithParentDepthFirst<T>(
-        collectingValuesInto array: inout [T],
-        traverseBlock: (SourceKittenDictionary, SourceKittenDictionary) -> [T]?) {
-        substructure.forEach { subDict in
-            subDict.traverseWithParentDepthFirst(collectingValuesInto: &array, traverseBlock: traverseBlock)
-
-            if let collectedValues = traverseBlock(self, subDict) {
-                array += collectedValues
-            }
-        }
-    }
-
-    /// Traversing all substuctures of the dictionary hierarchically, calling `traverseBlock` on each node.
-    /// Traversing using breadth first strategy, so deepest substructures will be passed to `traverseBlock` last.
-    ///
-    /// - parameter traverseBlock: block that will be called for each substructure in the dictionary.
-    ///
-    /// - returns: The list of substructure dictionaries with updated values from the traverse block.
-    func traverseBreadthFirst<T>(traverseBlock: (SourceKittenDictionary) -> [T]?) -> [T] {
-        var result: [T] = []
-        traverseBreadthFirst(collectingValuesInto: &result, traverseBlock: traverseBlock)
-        return result
-    }
-
-    private func traverseBreadthFirst<T>(collectingValuesInto array: inout [T],
-                                         traverseBlock: (SourceKittenDictionary) -> [T]?) {
-        substructure.forEach { subDict in
-            if let collectedValues = traverseBlock(subDict) {
-                array += collectedValues
-            }
-            subDict.traverseDepthFirst(collectingValuesInto: &array, traverseBlock: traverseBlock)
-        }
-    }
-}
-
-//extension Dictionary where Key == Example {
-//    /// Returns a dictionary with SwiftLint violation markers (↓) removed from keys.
-//    ///
-//    /// - returns: A new `Dictionary`.
-//    func removingViolationMarkers() -> [Key: Value] {
-//        return Dictionary(uniqueKeysWithValues: map { key, value in
-//            return (key.removingViolationMarkers(), value)
-//        })
-//    }
-//}
 
 extension SourceKittenDictionary {
     func flatten() -> [SourceKittenDictionary] {
@@ -293,5 +190,11 @@ extension SourceKittenDictionary {
         }
         arr.append(self)
         return arr
+    }
+}
+
+extension SourceKittenFramework.Structure {
+    func readableDictionary() -> SourceKittenDictionary {
+        SourceKittenDictionary(self.dictionary)
     }
 }
