@@ -7,10 +7,10 @@ private let unvalidSafeInputRegexes = [
     (rule: #".+(?<!\\)\".+"#, description: "Non-escaped string delimiter mid-string"),
     (rule: #".+(?<!\\)\\\(.+"#, description: "Interpolation")
     ]
-private let pattern = "URL\\s*\\(\\s*\(expectedParameterName)\\s*:\\s*\""
+private let pattern = #"URL\s*\(\s*"# + expectedParameterName + #"\s*:\s*""#
 
-private let disablerComment = "//\\s*safeurl:disable"
-private let warnModeComment = "//\\s*safeurl:warn"
+private let disablerComment = #"//\s*safeurl:disable"#
+private let warnModeComment = #"//\s*safeurl:warn"#
 
 typealias SourceKittenSubstructure = [SourceKittenDictionary]
 
