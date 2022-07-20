@@ -27,6 +27,10 @@ public class SafeURLScanInfo {
 }
 
 public class SafeURLKit {
+    private static func prepareSourceKitten() {
+        setenv("IN_PROCESS_SOURCEKIT", "YES", 1) // Necessary for running within a plugin sandbox
+    }
+    
     private static func extractSafeURLArgumentFromValidSubstructure(_ substructure: SourceKittenSubstructure) -> SourceKittenDictionary? {
         let arguments = substructure.filter { $0.expressionKind == .argument }
         if arguments.count != 1 {
@@ -56,7 +60,7 @@ public class SafeURLKit {
     }
     
     public static func scanAndReport(_ scanInfo: SafeURLScanInfo) throws -> Bool {
-        setenv("IN_PROCESS_SOURCEKIT", "YES", 1) // Necessary for running within a plugin sandbox
+        prepareSourceKitten()
         
         let skFile = SourceKittenFramework.File(contents: scanInfo.fileContent)
         let skStructure = try SourceKittenFramework.Structure(file: skFile)
