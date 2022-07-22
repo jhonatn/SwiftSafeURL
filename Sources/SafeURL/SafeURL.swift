@@ -1,7 +1,7 @@
 import Foundation
 
 public extension URL {
-    init(safeString: String) {
-        self.init(string: safeString)!
+    init(safeString: StaticString) {
+        self.init(string: "\(safeString)")!
     }
 }

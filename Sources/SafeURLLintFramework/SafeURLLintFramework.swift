@@ -7,7 +7,7 @@ private let quotesAsCharSet = CharacterSet(arrayLiteral: "\"")
 private let expectedParameterName = "safeString"
 private let unvalidSafeInputRegexes = [
     (rule: #".+(?<!\\)\".+"#, description: "Non-escaped string delimiter mid-string"),
-    (rule: #".+(?<!\\)\\\(.+"#, description: "Interpolation")
+    (rule: #".+(?<!\\)\\u\{.+"#, description: "Interpolation")
     ]
 private let pattern = #"URL\s*\(\s*"# + expectedParameterName + #"\s*:\s*""#
 
