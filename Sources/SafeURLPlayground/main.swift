@@ -7,10 +7,12 @@ _ = URL(safeString: "localhost")
 _ = URL(safeString: "http://google.com")
 _ = URL(safeString: "https://google.com")
 _ = URL(safeString: "git@github.com:apple/swift.git")
+_ = URL(safeString: "someapp://intentUrl")
 
-// MARK: Unvalid input
+// MARK: Invalid input
 _ = URL(safeString: "")
-_ = URL(safeString: "bjignuoergnig3j894j8023f444qf@Q#C$T@B^UN&I$")
+_ = URL(safeString: "https://google. com")
+_ = URL(safeString: "bjigigj894j8044qf@Q#C$T@B^UN&I$")
 
 // MARK: SafeURL requirement error
 _ = URL(safeString: "http://\u{1F600}.test")
