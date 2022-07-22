@@ -88,7 +88,7 @@ public class SafeURLKit {
                 if text.range(of: $0.rule, options: .regularExpression) != nil {
                     declarationViolations.append((
                         location: location,
-                        ruleDescription: $0.description
+                        ruleDescription: "String parameter has features that are not compatible with this URL initializer"
                     ))
                 }
             }
@@ -110,7 +110,7 @@ public class SafeURLKit {
             allViolations.map({ location, message in
                 XcodeIssue.issue(
                     scanInfo.scanMode,
-                    "URL syntax error" + (message.map { ": \($0)" } ?? ""),
+                    message ?? "URL is not valid",
                     at: location
                 )
             })
