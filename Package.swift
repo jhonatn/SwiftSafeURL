@@ -1,13 +1,10 @@
-// swift-tools-version: 5.7
+// swift-tools-version: 5.5
 
 import PackageDescription
 
 let package = Package(
     name: "SafeURL",
-    platforms: [
-        .iOS("11.0"),
-        .macOS("12")
-    ],
+    platforms: [ .macOS("10.13") ],
     products: [
         .library(
             name: "SafeURL",

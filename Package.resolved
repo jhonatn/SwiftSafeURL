@@ -1,50 +1,52 @@
 {
-  "pins" : [
-    {
-      "identity" : "sourcekitten",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/jpsim/SourceKitten.git",
-      "state" : {
-        "revision" : "817dfa6f2e09b0476f3a6c9dbc035991f02f0241",
-        "version" : "0.32.0"
+  "object": {
+    "pins": [
+      {
+        "package": "SourceKitten",
+        "repositoryURL": "https://github.com/jpsim/SourceKitten.git",
+        "state": {
+          "branch": null,
+          "revision": "817dfa6f2e09b0476f3a6c9dbc035991f02f0241",
+          "version": "0.32.0"
+        }
+      },
+      {
+        "package": "swift-argument-parser",
+        "repositoryURL": "https://github.com/apple/swift-argument-parser.git",
+        "state": {
+          "branch": null,
+          "revision": "df9ee6676cd5b3bf5b330ec7568a5644f547201b",
+          "version": "1.1.3"
+        }
+      },
+      {
+        "package": "SWXMLHash",
+        "repositoryURL": "https://github.com/drmohundro/SWXMLHash.git",
+        "state": {
+          "branch": null,
+          "revision": "6469881a3f30417c5bb02404ea4b69207f297592",
+          "version": "6.0.0"
+        }
+      },
+      {
+        "package": "XcodeIssueReporting",
+        "repositoryURL": "https://github.com/baguio/XcodeIssueReporting",
+        "state": {
+          "branch": null,
+          "revision": "81e902f09fb9081240bb446a4d4549cce76b9362",
+          "version": "1.3.0"
+        }
+      },
+      {
+        "package": "Yams",
+        "repositoryURL": "https://github.com/jpsim/Yams.git",
+        "state": {
+          "branch": null,
+          "revision": "9ff1cc9327586db4e0c8f46f064b6a82ec1566fa",
+          "version": "4.0.6"
+        }
       }
-    },
-    {
-      "identity" : "swift-argument-parser",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/apple/swift-argument-parser.git",
-      "state" : {
-        "revision" : "df9ee6676cd5b3bf5b330ec7568a5644f547201b",
-        "version" : "1.1.3"
-      }
-    },
-    {
-      "identity" : "swxmlhash",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/drmohundro/SWXMLHash.git",
-      "state" : {
-        "revision" : "6469881a3f30417c5bb02404ea4b69207f297592",
-        "version" : "6.0.0"
-      }
-    },
-    {
-      "identity" : "xcodeissuereporting",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/baguio/XcodeIssueReporting",
-      "state" : {
-        "revision" : "51dbfa99e1d08ad9ac3699ad6be205ae59e4390d",
-        "version" : "1.2.2"
-      }
-    },
-    {
-      "identity" : "yams",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/jpsim/Yams.git",
-      "state" : {
-        "revision" : "9ff1cc9327586db4e0c8f46f064b6a82ec1566fa",
-        "version" : "4.0.6"
-      }
-    }
-  ],
-  "version" : 2
+    ]
+  },
+  "version": 1
 }
