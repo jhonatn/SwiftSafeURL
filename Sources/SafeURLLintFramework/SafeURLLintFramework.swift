@@ -72,7 +72,7 @@ public class SafeURLKit {
 
         let urlDeclarations: [SourceKittenSubstructure] = skd.flatten().compactMap { "URL" == $0.name ? $0.substructure : nil }
 
-        let allViolations: [RawLintViolation] = urlDeclarations.flatMap { urlInit in
+        let allViolations: [RawLintViolation] = urlDeclarations.flatMap { urlInit -> [RawLintViolation] in
             var declarationViolations: [RawLintViolation] = []
             
             guard
