@@ -5,13 +5,13 @@ import XcodeIssueReportingForSourceKitten
 
 private let quotesAsCharSet = CharacterSet(arrayLiteral: "\"")
 private let expectedParameterName = "safeString"
-private let unvalidSafeInputRegexes = [
+private let invalidSafeInputRegexes = [
     (rule: #".+(?<!\\)\".+"#, description: "Non-escaped string delimiter mid-string"),
     (rule: #".+(?<!\\)\\u\{.+"#, description: "Interpolation")
     ]
 private let pattern = #"URL\s*\(\s*"# + expectedParameterName + #"\s*:\s*""#
 
-private let disablerComment = #"//\s*safeurl:disable"#
+private let disabledModeComment = #"//\s*safeurl:disable"#
 private let warnModeComment = #"//\s*safeurl:warn"#
 
 typealias SourceKittenSubstructure = [SourceKittenDictionary]
@@ -47,7 +47,7 @@ public class SafeURLKit {
         let fileURL = URL(fileURLWithPath: filePath)
         let contents = try String(contentsOf: fileURL)
         
-        if let _ = contents.range(of: disablerComment, options: .regularExpression, range: nil) {
+        if let _ = contents.range(of: disabledModeComment, options: .regularExpression, range: nil) {
             return nil
         }
         
@@ -84,7 +84,7 @@ public class SafeURLKit {
                 return declarationViolations
             }
 
-            unvalidSafeInputRegexes.forEach {
+            invalidSafeInputRegexes.forEach {
                 if text.range(of: $0.rule, options: .regularExpression) != nil {
                     declarationViolations.append((
                         location: location,
