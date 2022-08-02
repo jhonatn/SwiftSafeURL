@@ -21,7 +21,7 @@ public class SafeURLScanInfo {
     let fileContent: String
     let scanMode: XcodeIssueType
     
-    init(filePath: String, fileContent: String, scanMode: XcodeIssueType) {
+    init(filePath: String, fileContent: String, scanMode: XcodeIssueType = .error) {
         self.filePath = filePath
         self.fileContent = fileContent
         self.scanMode = scanMode
@@ -63,7 +63,7 @@ public class SafeURLKit {
         )
     }
     
-    public static func scanAndReport(_ scanInfo: SafeURLScanInfo) throws -> Int {
+    static func scan(_ scanInfo: SafeURLScanInfo) throws -> [XcodeIssue] {
         prepareSourceKitten()
         
         let skFile = SourceKittenFramework.File(contents: scanInfo.fileContent)
@@ -106,16 +106,16 @@ public class SafeURLKit {
             return declarationViolations
         }
         
-        let reportResult = XcodeIssue.report(
-            allViolations.map({ location, message in
-                XcodeIssue.issue(
-                    scanInfo.scanMode,
-                    message ?? "URL is not valid",
-                    at: location
-                )
-            })
-        )
-        
-        return reportResult
+        return allViolations.map({ location, message in
+            XcodeIssue.issue(
+                scanInfo.scanMode,
+                message ?? "URL is not valid",
+                at: location
+            )
+        })
+    }
+    
+    public static func scanAndReport(_ scanInfo: SafeURLScanInfo) throws -> Int {
+        XcodeIssue.report(try scan(scanInfo))
     }
 }
