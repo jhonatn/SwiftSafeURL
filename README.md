@@ -36,3 +36,5 @@ let invalidUrl = URL(safeString: "https://example./tld")
 ```
 
 SafeURL requires its parameter to be a single simple string literal 
+
+If a file contains the comment `// safeurl:warn`, invalid `URL`s in this file will be compiled and will show a warning instead of an error. Note that this is not recommended, as this will still cause a force-stop on runtime.
