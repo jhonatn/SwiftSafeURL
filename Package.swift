@@ -44,9 +44,12 @@ let package = Package(
             name: "SafeURLLintExecutable",
             dependencies: ["SafeURLLintFramework"]
         ),
-        .executableTarget(
-            name: "SafeURLPlayground",
-            dependencies: ["SafeURL"],
+        .testTarget(
+            name: "SafeURLTests",
+            dependencies: [
+                "SafeURL",
+                "SafeURLLintFramework",
+            ],
             plugins: ["SafeURLPlugin"]
         ),
     ]
