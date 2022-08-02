@@ -32,8 +32,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/baguio/XcodeIssueReporting",
       "state" : {
-        "revision" : "6df15f8267a92ae33b6d79f850ae9d53dd864f56",
-        "version" : "1.4.0"
+        "revision" : "76165bb2c12adee23d3d9f4ed0b475c9c438d94a",
+        "version" : "1.4.1"
       }
     },
     {
