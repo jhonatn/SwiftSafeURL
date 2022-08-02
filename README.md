@@ -1,3 +1,6 @@
+[![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Fbaguio%2FSwiftSafeURL%2Fbadge%3Ftype%3Dswift-versions)](https://swiftpackageindex.com/baguio/SwiftSafeURL)
+[![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Fbaguio%2FSwiftSafeURL%2Fbadge%3Ftype%3Dplatforms)](https://swiftpackageindex.com/baguio/SwiftSafeURL)
+
 # SafeURL
 
 Tool for avoiding using the `URL(string:)` initializer with optional result, instead introducing a compile time URL validity check. Note, this does not check for website availability, but if the URL is formatted correctly.
